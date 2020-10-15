@@ -1,0 +1,12 @@
+{
+    "name": "chinese-card",
+    "description": "",
+    "main": "index.js",
+    "module": "index.mjs",
+    "es2015": "esm/index.mjs",
+    "es2017": "esm/index.mjs",
+    "types": "types/index.d.ts",
+    "collection": "collection/collection-manifest.json",
+    "collection:main": "collection/index.js",
+    "license": "MIT"
+  }

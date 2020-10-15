@@ -17,49 +17,49 @@ export class FontBg {
   componentWillLoad() {}
   componentDidRender() {}
   bgRender(type: number) {
-    const {width=100,height=100} = this.styleConfig
+    const {width=100} = this.styleConfig
     switch (type) {
       case 1:
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} class="fontBg" id={this.insertId}>
+          <svg xmlns="http://www.w3.org/2000/svg" width={width} height={width} class="fontBg" id={this.insertId}>
             <line x1={0} y1={0} x2={width} y2={0} stroke="#DDD" />
-            <line x1={0} y1={0} x2={0} y2={height} stroke="#DDD" />
-            <line x1={width} y1={0} x2={width} y2={height} stroke="#DDD" />
-            <line x1={0} y1={height} x2={width} y2={height} stroke="#DDD" />
-            <line x1="0" y1="0" x2={width} y2={height} stroke="#DDD" />
-            <line x1={width} y1="0" x2="0" y2={height} stroke="#DDD" />
-            <line x1={width/2} y1="0" x2={width/2} y2={height} stroke="#DDD" />
-            <line x1="0" y1={height/2} x2={width} y2={height/2} stroke="#DDD" />
+            <line x1={0} y1={0} x2={0} y2={width} stroke="#DDD" />
+            <line x1={width} y1={0} x2={width} y2={width} stroke="#DDD" />
+            <line x1={0} y1={width} x2={width} y2={width} stroke="#DDD" />
+            <line x1="0" y1="0" x2={width} y2={width} stroke="#DDD" />
+            <line x1={width} y1="0" x2="0" y2={width} stroke="#DDD" />
+            <line x1={width/2} y1="0" x2={width/2} y2={width} stroke="#DDD" />
+            <line x1="0" y1={width/2} x2={width} y2={width/2} stroke="#DDD" />
           </svg>
         );
       case 2:
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} class="fontBg" id={this.insertId}>
+          <svg xmlns="http://www.w3.org/2000/svg" width={width} height={width} class="fontBg" id={this.insertId}>
             <line x1={0} y1={0} x2={width} y2={0} stroke="#DDD" />
-            <line x1={0} y1={0} x2={0} y2={height} stroke="#DDD" />
-            <line x1={width} y1={0} x2={width} y2={height} stroke="#DDD" />
-            <line x1={0} y1={height} x2={width} y2={height} stroke="#DDD" />
-            <line x1={width/2} y1="0" x2={width/2} y2={height} stroke="#DDD" />
-            <line x1="0" y1={height/2} x2={width} y2={height/2} stroke="#DDD" />
+            <line x1={0} y1={0} x2={0} y2={width} stroke="#DDD" />
+            <line x1={width} y1={0} x2={width} y2={width} stroke="#DDD" />
+            <line x1={0} y1={width} x2={width} y2={width} stroke="#DDD" />
+            <line x1={width/2} y1="0" x2={width/2} y2={width} stroke="#DDD" />
+            <line x1="0" y1={width/2} x2={width} y2={width/2} stroke="#DDD" />
           </svg>
         );
       default:
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} class="fontBg" id={this.insertId}>
+          <svg xmlns="http://www.w3.org/2000/svg" width={width} height={width} class="fontBg" id={this.insertId}>
             <line x1={0} y1={0} x2={width} y2={0} stroke="#DDD" />
-            <line x1={0} y1={0} x2={0} y2={height} stroke="#DDD" />
-            <line x1={width} y1={0} x2={width} y2={height} stroke="#DDD" />
-            <line x1={0} y1={height} x2={width} y2={height} stroke="#DDD" />
-            <line x1="0" y1="0" x2={width} y2={height} stroke="#DDD" />
-            <line x1={width} y1="0" x2="0" y2={height} stroke="#DDD" />
-            <line x1={width/2} y1="0" x2={width/2} y2={height} stroke="#DDD" />
-            <line x1="0" y1={height/2} x2={width} y2={height/2} stroke="#DDD" />
+            <line x1={0} y1={0} x2={0} y2={width} stroke="#DDD" />
+            <line x1={width} y1={0} x2={width} y2={width} stroke="#DDD" />
+            <line x1={0} y1={width} x2={width} y2={width} stroke="#DDD" />
+            <line x1="0" y1="0" x2={width} y2={width} stroke="#DDD" />
+            <line x1={width} y1="0" x2="0" y2={width} stroke="#DDD" />
+            <line x1={width/2} y1="0" x2={width/2} y2={width} stroke="#DDD" />
+            <line x1="0" y1={width/2} x2={width} y2={width/2} stroke="#DDD" />
           </svg>
         );
     }
   }
   render() {
-    const {width,height} = this.styleConfig
-    return <div style={{width:width+'px',height:height+'px'}}>{this.bgRender(this.type)}</div>;
+    const {width} = this.styleConfig
+    return <div style={{width:width+'px',height:width+'px'}}>{this.bgRender(this.type)}</div>;
   }
 }

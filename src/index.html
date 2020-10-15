@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html dir="ltr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
-    <title>Stencil Component Starter</title>
 
-    <script type="module" src="/build/hanzikapian.esm.js"></script>
-    <script nomodule src="/build/hanzikapian.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@2.2/dist/hanzi-writer.min.js"></script>
-  </head>
-  <body>
-    <nb-card 
-    name="editor" 
-    config ='{"pinyin":{"width":200,"height":100},"hanzi":{"width":200,"height":200,"padding":5}}'></nb-card>
-    <!-- <hz-player name="player"></hz-player> -->
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+  <title>Stencil Component Starter</title>
+
+  <script type="module" src="/build/hanzikapian.esm.js"></script>
+  <script nomodule src="/build/hanzikapian.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@2.2/dist/hanzi-writer.min.js"></script>
+</head>
+
+<body>
+  <div>
+    <nb-card id="nbCard" word="好"
+      config='{"pinyin":{"width":200},"hanzi":{"width":200}}'></nb-card>
+  </div>
+  <div>
+    <input type="text" id="input">
+    <button id="scbtn">生成</button>
+  </div>
+  <script>
+    const nbCard = document.getElementById('nbCard')
+    const myInput = document.getElementById('input')
+    const scbtn = document.getElementById('scbtn')
+    scbtn.addEventListener('click', () => {
+      nbCard.name = myInput.value
+    })
+  </script>
+</body>
+
 </html>

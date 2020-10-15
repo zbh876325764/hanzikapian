@@ -1,51 +1,187 @@
 import { Component, Prop, h, State, Watch } from '@stencil/core';
-import { StyleConfig } from '../global';
-import pinyin from 'pinyin'
+import { StyleConfig, CharactersStep, PinyinData, WriterConfig } from '../global';
 @Component({
   tag: 'nb-card',
   styleUrls: ['nbCard.scss'],
 })
 export class NbCard {
-  @Prop() name: string;
+  @Prop({ mutable: true }) word: string;
   @Prop({ mutable: true }) config: string;
   @State() styleConfig: StyleConfig = { hanzi: {}, pinyin: {} };
-
+  @State() pinyinData: PinyinData = { id: '', media: [], p: '', p_heteronym: [], p_number: '', s: '' };
+  @State() writer: any;
+  @State() currentWord: string;
+  @State() steps: CharactersStep = { total: 0, currentStep: 0 };
+  @State() writerConfig: WriterConfig = { isRadicalHighlight: false, isAnimating: false, isDoing: false, isQuiz: false };
   @Watch('config')
-  watchConfig(value:string) {
+  watchConfig(value: string) {
     this.styleConfig = JSON.parse(value);
   }
-  initPinyin(word:string){
-     return new Promise(function(resolve, reject) {
-      setTimeout(() => {
-        const res = pinyin(word)
-        resolve(res);
-      }, 500);
+  @Watch('word')
+  watchName(value: string) {
+    this.initPinyin(value).then(res => {
+      this.pinyinData = res;
     });
+  }
+
+  // 请求拼音数据
+  async initPinyin(word: string) {
+    const res = await fetch('http://localhost:1234/getpinyin?word=' + word, {
+      method: 'post',
+      mode: 'cors',
+    });
+    const data = await res.json();
+    return data;
+  }
+  onLoadCharDataSuccess(e: any) {
+    this.steps.total = e.medians.length;
+    this.steps.currentStep = 0;
+  }
+  // 加载汉字
+  renderHanzi(word: string, id: string) {
+    const { hanzi } = this.styleConfig;
+    const { width } = hanzi;
+    const container = document.getElementById('character-root' + id);
+    if (!container) {
+      return;
+    }
+    if (!this.writer) {
+      const self = this;
+      this.writer = (window as any).HanziWriter.create('character-root' + id, word, {
+        width: width || 100,
+        height: width || 100,
+        radicalColor: '#555',
+        onLoadCharDataSuccess: this.onLoadCharDataSuccess.bind(self),
+      });
+    } else {
+      this.writer.setCharacter(word);
+    }
+    this.currentWord = word;
+  }
+  //播放动画
+  animateCharacter() {
+    this.writer.animateCharacter();
+  }
+  // 单步动画
+  animateStroke() {
+    if (this.writerConfig.isDoing) {
+      return;
+    }
+    if (this.writerConfig.isAnimating) {
+      if (this.steps.currentStep + 1 === this.steps.total) {
+        this.writerConfig = { ...this.writerConfig, isDoing: true };
+        this.writer.animateStroke(this.steps.currentStep, {
+          onComplete: () => {
+            this.steps.currentStep = 0;
+            this.writer.showCharacter({
+              onComplete: () => {
+                this.writerConfig = { ...this.writerConfig, isAnimating: false, isDoing: false };
+              },
+            });
+          },
+        });
+      } else {
+        this.writerConfig = { ...this.writerConfig, isDoing: true };
+        this.writer.animateStroke(this.steps.currentStep, {
+          onComplete: () => {
+            this.steps.currentStep++;
+            this.writerConfig = { ...this.writerConfig, isDoing: false };
+          },
+        });
+      }
+    } else {
+      this.writer.hideCharacter({
+        onComplete: () => {
+          this.writerConfig = { ...this.writerConfig, isAnimating: true };
+        },
+      });
+      this.writer.animateStroke(0, {
+        onComplete: () => {
+          this.steps.currentStep++;
+        },
+      });
+    }
+  }
+  // 测试模式
+  quiz() {
+    if (!this.writerConfig.isQuiz) {
+      this.writer.quiz();
+    } else {
+      this.writer.cancelQuiz();
+      this.writer.showCharacter();
+    }
+    this.writerConfig = { ...this.writerConfig, isQuiz: !this.writerConfig.isQuiz };
+  }
+  // 取消测试模式
+  cancleQuiz() {
+    this.writer.cancelQuiz();
+    this.writer.showCharacter();
+    this.writerConfig = { ...this.writerConfig, isQuiz: false };
+  }
+  // 部首高亮
+  radicalHighlight() {
+    if (this.writerConfig.isRadicalHighlight) {
+      this.writer.updateColor('radicalColor', '#555', { duration: 0 });
+    } else {
+      this.writer.updateColor('radicalColor', '#168F16', { duration: 0 });
+    }
+    this.writerConfig = { ...this.writerConfig, isRadicalHighlight: !this.writerConfig.isRadicalHighlight };
   }
   componentWillLoad() {
     this.watchConfig(this.config);
-    this.initPinyin('钟').then(res=>{
-      console.log(res);
-    })
+    this.watchName(this.word);
   }
-  componentDidLoad() {
-    const { hanzi } = this.styleConfig;
-    const { width, height, padding } = hanzi;
-    (window as any).HanziWriter.create('character-root', '我', {
-      width: width || 100,
-      height: height || 100,
-      padding: padding || 5,
-    });
+  componentDidRender() {
+    const { s, id } = this.pinyinData;
+    if (s && id && this.currentWord !== s) {
+      this.renderHanzi(s, id);
+    }
   }
   render() {
     const { hanzi, pinyin } = this.styleConfig;
+    const { id, p_heteronym, media } = this.pinyinData;
     return (
-      <div 
-      id="root" 
-      style={{ width: Math.max(hanzi.width,pinyin.width)+'px', height: pinyin.height+hanzi.height + 'px' }}
+      <div
+        style={{
+          width: Math.max(hanzi.width, pinyin.width) + 'px',
+        }}
       >
-        <nb-pinyin styleConfig={pinyin}></nb-pinyin>
-        <font-bg insertId="character-root" type={1} styleConfig={hanzi}></font-bg>
+        <div>
+          <nb-pinyin styleConfig={pinyin} pinyinList={p_heteronym} mediaList={media}></nb-pinyin>
+          <font-bg insertId={`character-root${id}`} type={1} styleConfig={hanzi}></font-bg>
+          <button
+            onClick={() => {
+              this.cancleQuiz()
+              this.animateCharacter();
+            }}
+          >
+            连续
+          </button>
+          <button
+            onClick={() => {
+              if(this.writerConfig.isQuiz){
+                this.cancleQuiz()
+              }
+              this.animateStroke();
+            }}
+          >
+            {this.writerConfig.isAnimating ? '下一步' : '分步'}
+          </button>
+          <button
+            onClick={() => {
+              this.quiz();
+            }}
+          >
+            {this.writerConfig.isQuiz ? '演示模式' : '测试模式'}
+          </button>
+          <button
+            onClick={() => {
+              this.radicalHighlight();
+            }}
+          >
+            {this.writerConfig.isRadicalHighlight ? '取消部首高亮' : '部首高亮'}
+          </button>
+        </div>
       </div>
     );
   }

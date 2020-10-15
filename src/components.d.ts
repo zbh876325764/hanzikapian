@@ -15,25 +15,13 @@ export namespace Components {
          */
         "type": number;
     }
-    interface MyComponent {
-        /**
-          * The first name
-         */
-        "first": string;
-        /**
-          * The last name
-         */
-        "last": string;
-        /**
-          * The middle name
-         */
-        "middle": string;
-    }
     interface NbCard {
         "config": string;
-        "name": string;
+        "word": string;
     }
     interface NbPinyin {
+        "mediaList": Array<string>;
+        "pinyinList": any;
         "styleConfig": PinyinStyle;
     }
 }
@@ -43,12 +31,6 @@ declare global {
     var HTMLFontBgElement: {
         prototype: HTMLFontBgElement;
         new (): HTMLFontBgElement;
-    };
-    interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {
-    }
-    var HTMLMyComponentElement: {
-        prototype: HTMLMyComponentElement;
-        new (): HTMLMyComponentElement;
     };
     interface HTMLNbCardElement extends Components.NbCard, HTMLStencilElement {
     }
@@ -64,7 +46,6 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "font-bg": HTMLFontBgElement;
-        "my-component": HTMLMyComponentElement;
         "nb-card": HTMLNbCardElement;
         "nb-pinyin": HTMLNbPinyinElement;
     }
@@ -78,30 +59,17 @@ declare namespace LocalJSX {
          */
         "type"?: number;
     }
-    interface MyComponent {
-        /**
-          * The first name
-         */
-        "first"?: string;
-        /**
-          * The last name
-         */
-        "last"?: string;
-        /**
-          * The middle name
-         */
-        "middle"?: string;
-    }
     interface NbCard {
         "config"?: string;
-        "name"?: string;
+        "word"?: string;
     }
     interface NbPinyin {
+        "mediaList"?: Array<string>;
+        "pinyinList"?: any;
         "styleConfig"?: PinyinStyle;
     }
     interface IntrinsicElements {
         "font-bg": FontBg;
-        "my-component": MyComponent;
         "nb-card": NbCard;
         "nb-pinyin": NbPinyin;
     }
@@ -111,7 +79,6 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "font-bg": LocalJSX.FontBg & JSXBase.HTMLAttributes<HTMLFontBgElement>;
-            "my-component": LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
             "nb-card": LocalJSX.NbCard & JSXBase.HTMLAttributes<HTMLNbCardElement>;
             "nb-pinyin": LocalJSX.NbPinyin & JSXBase.HTMLAttributes<HTMLNbPinyinElement>;
         }
