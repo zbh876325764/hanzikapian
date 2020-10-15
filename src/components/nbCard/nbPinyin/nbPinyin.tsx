@@ -24,7 +24,7 @@ export class NbPinyin {
     mp3.play()
   }
   render() {
-    const { width } = this.styleConfig;
+    const { width,color } = this.styleConfig;
     const height = width / 3;
     return (
       <div>
@@ -44,6 +44,7 @@ export class NbPinyin {
               height: height + 'px',
               lineHeight: width * 0.28 + 'px',
               fontSize: width * 0.24 + 'px',
+              color:color||'#555'
             }}
           >
             {this.currentPinyin}
@@ -55,16 +56,16 @@ export class NbPinyin {
               this.currentPinyinIndex = tg.selectedIndex
             }}
             id="pinyinSelect"
-            style={{ position: 'absolute', left: width + 'px', top: '0px', width: '100px', height: '30px' }}
+            style={{ position: 'absolute', left: width + 'px', top: '0px', width: '100px', height: height/2+'px' }}
           >
-            {this.pinyinList.map(item => (
+            {this.pinyinList.map((item:string) => (
               <option class="pinyinOption" value={item}>
                 {item}
               </option>
             ))}
           </select>
           <button
-            style={{ position: 'absolute', left: width + 'px', top: '30px', width:'80px', height: '30px' }}
+            style={{ position: 'absolute', left: width + 'px', top: height/2+'px', width:'80px', height: height/2+'px' }}
               onClick={()=>{
                 this.play()
               }}

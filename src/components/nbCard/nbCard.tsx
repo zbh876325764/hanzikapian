@@ -15,6 +15,14 @@ export class NbCard {
   @State() writerConfig: WriterConfig = { isRadicalHighlight: false, isAnimating: false, isDoing: false, isQuiz: false };
   @Watch('config')
   watchConfig(value: string) {
+    const styleConfig = JSON.parse(value)
+    const {pinyin,hanzi} = styleConfig
+    if(pinyin.width<100){
+      pinyin.width = 100
+    }
+    if(hanzi.width<100){
+      hanzi.width = 100
+    }
     this.styleConfig = JSON.parse(value);
   }
   @Watch('word')
@@ -40,7 +48,7 @@ export class NbCard {
   // 加载汉字
   renderHanzi(word: string, id: string) {
     const { hanzi } = this.styleConfig;
-    const { width } = hanzi;
+    const { width, strokeColor } = hanzi;
     const container = document.getElementById('character-root' + id);
     if (!container) {
       return;
@@ -50,7 +58,8 @@ export class NbCard {
       this.writer = (window as any).HanziWriter.create('character-root' + id, word, {
         width: width || 100,
         height: width || 100,
-        radicalColor: '#555',
+        strokeColor: strokeColor || '#555',
+        radicalColor: strokeColor,
         onLoadCharDataSuccess: this.onLoadCharDataSuccess.bind(self),
       });
     } else {
@@ -105,7 +114,11 @@ export class NbCard {
   // 测试模式
   quiz() {
     if (!this.writerConfig.isQuiz) {
-      this.writer.quiz();
+      this.writer.quiz({
+        onComplete: () => {
+          this.writerConfig = { ...this.writerConfig, isQuiz: false };
+        },
+      });
     } else {
       this.writer.cancelQuiz();
       this.writer.showCharacter();
@@ -120,10 +133,12 @@ export class NbCard {
   }
   // 部首高亮
   radicalHighlight() {
+    const { hanzi } = this.styleConfig;
+    const { strokeColor, radicalColor } = hanzi;
     if (this.writerConfig.isRadicalHighlight) {
-      this.writer.updateColor('radicalColor', '#555', { duration: 0 });
+      this.writer.updateColor('radicalColor', strokeColor || '#555', { duration: 0 });
     } else {
-      this.writer.updateColor('radicalColor', '#168F16', { duration: 0 });
+      this.writer.updateColor('radicalColor', radicalColor || '#168F16', { duration: 0 });
     }
     this.writerConfig = { ...this.writerConfig, isRadicalHighlight: !this.writerConfig.isRadicalHighlight };
   }
@@ -151,7 +166,7 @@ export class NbCard {
           <font-bg insertId={`character-root${id}`} type={1} styleConfig={hanzi}></font-bg>
           <button
             onClick={() => {
-              this.cancleQuiz()
+              this.cancleQuiz();
               this.animateCharacter();
             }}
           >
@@ -159,8 +174,8 @@ export class NbCard {
           </button>
           <button
             onClick={() => {
-              if(this.writerConfig.isQuiz){
-                this.cancleQuiz()
+              if (this.writerConfig.isQuiz) {
+                this.cancleQuiz();
               }
               this.animateStroke();
             }}

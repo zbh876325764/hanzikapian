@@ -5,9 +5,12 @@ export interface StyleConfig {
 
 export interface HanziStyle {
   width?: number;
+  strokeColor?:string;
+  radicalColor?:string;
 }
 export interface PinyinStyle {
   width?: number;
+  color?:string;
 }
 
 export interface CharactersStep {

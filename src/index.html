@@ -14,7 +14,7 @@
 <body>
   <div>
     <nb-card id="nbCard" word="好"
-      config='{"pinyin":{"width":200},"hanzi":{"width":200}}'></nb-card>
+      config='{"pinyin":{"width":200,"color":"#000"},"hanzi":{"width":200,"strokeColor":"#0ff","radicalColor":"#f00"}}'></nb-card>
   </div>
   <div>
     <input type="text" id="input">
@@ -25,7 +25,7 @@
     const myInput = document.getElementById('input')
     const scbtn = document.getElementById('scbtn')
     scbtn.addEventListener('click', () => {
-      nbCard.name = myInput.value
+      nbCard.word = myInput.value
     })
   </script>
 </body>
