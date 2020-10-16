@@ -15,8 +15,9 @@
     "loader/"
   ],
   "scripts": {
-    "build": "node build.js&&stencil build --docs",
-    "start": "node build.js&&stencil build --watch --serve --docs",
+    "start:after":"node build.js",
+    "build": "stencil build --serve --docs",
+    "start": "stencil build --watch --serve --docs",
     "dev": "stencil build --dev --watch --serve --docs",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",

@@ -14,16 +14,39 @@ export class NbCard {
   @State() steps: CharactersStep = { total: 0, currentStep: 0 };
   @State() writerConfig: WriterConfig = { isRadicalHighlight: false, isAnimating: false, isDoing: false, isQuiz: false };
   @Watch('config')
-  watchConfig(value: string) {
-    const styleConfig = JSON.parse(value)
-    const {pinyin,hanzi} = styleConfig
-    if(pinyin.width<100){
-      pinyin.width = 100
+  watchConfig(value: string, oldValue?: string) {
+    const styleConfig = JSON.parse(value);
+
+    const { pinyin, hanzi } = styleConfig;
+    if (pinyin.width < 100) {
+      pinyin.width = 100;
     }
-    if(hanzi.width<100){
-      hanzi.width = 100
+    if (hanzi.width < 100) {
+      hanzi.width = 100;
     }
-    this.styleConfig = JSON.parse(value);
+    this.styleConfig = styleConfig;
+    if (oldValue) {
+      const oldStyleConfig = JSON.parse(oldValue);
+      if (styleConfig.hanzi.strokeColor !== oldStyleConfig.hanzi.strokeColor) {
+        this.writer.updateColor('strokeColor', styleConfig.hanzi.strokeColor, { duration: 0 });
+        if (!this.writerConfig.isRadicalHighlight) {
+          this.writer.updateColor('radicalColor', styleConfig.hanzi.strokeColor, { duration: 0 });
+        }
+      }
+      if (styleConfig.hanzi.radicalColor !== oldStyleConfig.hanzi.radicalColor) {
+        if (this.writerConfig.isRadicalHighlight) {
+          this.writer.updateColor('radicalColor', styleConfig.hanzi.radicalColor, { duration: 0 });
+        }
+      }
+      if (styleConfig.hanzi.width !== oldStyleConfig.hanzi.width&&this.writer.Q) {
+        this.writer.Q.destroy();
+        this.writer = null;
+        const { s, id } = this.pinyinData;
+        if (s && id) {
+          this.renderHanzi(s, id);
+        }
+      }
+    }
   }
   @Watch('word')
   watchName(value: string) {
@@ -63,7 +86,7 @@ export class NbCard {
         onLoadCharDataSuccess: this.onLoadCharDataSuccess.bind(self),
       });
     } else {
-      this.writer.setCharacter(word);
+      this.writer.setCharacter(word, {});
     }
     this.currentWord = word;
   }
